@@ -1,0 +1,72 @@
+import UIKit
+
+class ViewController: UIViewController {
+    // Variables para almacenar los datos del paciente
+    var nombrePaciente: String?
+    var edadPaciente: Int?
+    var generoPaciente: String?
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        // Configuración de la interfaz de usuario
+        
+        // Text Field para ingresar el nombre del paciente
+        let nombreTextField = UITextField(frame: CGRect(x: 50, y: 100, width: 200, height: 30))
+        nombreTextField.placeholder = "Nombre del paciente"
+        nombreTextField.borderStyle = .roundedRect
+        self.view.addSubview(nombreTextField)
+        
+        // Text Field para ingresar la edad del paciente
+        let edadTextField = UITextField(frame: CGRect(x: 50, y: 150, width: 200, height: 30))
+        edadTextField.placeholder = "Edad del paciente"
+        edadTextField.borderStyle = .roundedRect
+        edadTextField.keyboardType = .numberPad
+        self.view.addSubview(edadTextField)
+        
+        // Segmented Control para seleccionar el género del paciente
+        let generoSegmentedControl = UISegmentedControl(items: ["Masculino", "Femenino"])
+        generoSegmentedControl.frame = CGRect(x: 50, y: 200, width: 200, height: 30)
+        generoSegmentedControl.selectedSegmentIndex = 0
+        self.view.addSubview(generoSegmentedControl)
+        
+        // Botón de aceptar
+        let aceptarButton = UIButton(type: .system)
+        aceptarButton.frame = CGRect(x: 50, y: 250, width: 200, height: 30)
+        aceptarButton.setTitle("Aceptar", for: .normal)
+        aceptarButton.addTarget(self, action: #selector(aceptarButtonTapped), for: .touchUpInside)
+        self.view.addSubview(aceptarButton)
+    }
+    
+    @objc func aceptarButtonTapped() {
+        // Obtener los valores ingresados por el usuario
+        guard let nombre = nombreTextField.text,
+              let edadString = edadTextField.text,
+              let edad = Int(edadString),
+              let genero = generoSegmentedControl.titleForSegment(at: generoSegmentedControl.selectedSegmentIndex) else {
+            // Si faltan datos, mostrar una alerta y salir de la función
+            showAlert(message: "Por favor, ingresa todos los datos del paciente.")
+            return
+        }
+        
+        // Asignar los valores a las variables del paciente
+        nombrePaciente = nombre
+        edadPaciente = edad
+        generoPaciente = genero
+        
+        // Abrir la ventana de la cámara
+        let imagePickerController = UIImagePickerController()
+        imagePickerController.sourceType = .camera
+        imagePickerController.delegate = self
+        present(imagePickerController, animated: true, completion: nil)
+    }
+    
+    func showAlert(message: String) {
+        let alert = UIAlertController(title: "Alerta", message: message, preferredStyle: .alert)
+        alert.addAction(UIAlertAction(title: "Aceptar", style: .default, handler: nil))
+        present(alert, animated: true, completion: nil)
+    }
+}
+
+extension ViewController: UIImagePickerControllerDelegate & UINavigationControllerDelegate {
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+        // Obtener
